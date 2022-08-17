@@ -1,0 +1,104 @@
+version: '3.5'
+services:
+  #PHP Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: digitalocean.com/php
+    container_name: app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www
+    volumes:
+      - ./web:/var/www
+      - ./php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - app-network
+
+  #Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: webserver_nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./web:/var/www
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+      - ./ssl:/etc/ssl/certs/
+    networks:
+      - app-network
+  #######################################
+  # Grafana: Monitor
+  #######################################
+  grafana:
+    image: grafana/grafana-oss:latest
+    container_name: grafana
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+  #######################################
+  # Prometheus: Datasource
+  #######################################
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    networks:
+      - app-network
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus_data:/promtheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+  #######################################
+  # Prometheus: exporter
+  #######################################
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node_exporter
+    expose:
+      - "9100"
+    restart: always
+    networks:
+      - app-network
+
+  #MySQL Service
+  db:
+    image: mysql:latest
+    container_name: mysql_db
+    cap_add:
+      - SYS_NICE # CAP_SYS_NICE
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel-project
+      MYSQL_ROOT_PASSWORD: "Rootp@ssw0rd"
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - dbdata:/var/lib/mysql/
+      - ./mysql/my.cnf:/etc/mysql/my.cnf
+      - ./mysql-files:/var/lib/mysql-files
+    networks:
+      - app-network
+#Docker Networks
+networks:
+  app-network:
+    driver: bridge
+#Volumes
+volumes:
+  dbdata:
+    driver: local
