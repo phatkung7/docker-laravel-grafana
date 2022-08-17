@@ -1,4 +1,4 @@
-# php-nginx-mysql-laravel-docker
+# Docker File For Create Container
  php8.0 / Nginx / MySQL / Grafana / Prometheus => For Laravel 8 
 # Install Laravel Project  
 - Clone Project From Github and set folder name "web"
