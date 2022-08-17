@@ -1,6 +1,5 @@
 # php-nginx-mysql-laravel-docker
  php8 / Nginx / MySQL / Grafana / Prometheus => For Laravel8 
-
 # Install Project  
 - Clone Project From Github and set folder name "web"
 - Create .env file
@@ -10,3 +9,9 @@
 - run docker-compose up -d
 # Dashboard Grafana
 - Import Dashboard Node Exporter Full ( id 1860 )
+#Other Config
+- Nginx /nginx/con.d/app.conf
+- Mysql /mysql/my.cnf
+- PHP /php/local.ini
+- SSL Cert /ssl
+- web /web
