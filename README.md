@@ -5,8 +5,8 @@
 - Clone Project From Github and set folder name "web"
 - Create .env file
 # Goto Code web Directory and Run to install composer
-docker run --rm -v $(pwd):/app composer install
+- docker run --rm -v $(pwd):/app composer install
 # Create Container from docker-compose.yml
-run docker-compose up -d
+- run docker-compose up -d
 # Dashboard Grafana
 - Import Dashboard Node Exporter Full ( id 1860 )
