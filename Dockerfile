@@ -40,9 +40,15 @@ RUN docker-php-ext-install gd
 # Install composer (php package manager)
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+#Install Git & Nodejs
+RUN apt-get install -y git-core \
+ && git clone https://github.com/nodejs/node.git \
+ && cd node \
+ && ./configure \
+ && make \
+ && sudo make install
 # Copy existing application directory contents to the working directory
 COPY . /var/www/html
-
 # Assign permissions of the working directory to the www-data user
 #RUN useradd -G www-data,root -u 1000 -d /home/administrator administrator
 #RUN chown -R www-data:www-data \
